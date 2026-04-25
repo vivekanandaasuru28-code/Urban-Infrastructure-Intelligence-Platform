@@ -16,7 +16,7 @@
 <br/>
 
    [![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-Visit%20App-blue?style=for-the-badge)](https://urban-infrastructure-intelligence.onrender.com/)
-   
+
 <br/>
 
 ![App Preview](img/ark.png)
@@ -56,11 +56,14 @@ To build an AI-based urban intelligence platform that analyzes infrastructure, i
 ## 📂 Project Structure
 
 ```
+├── img/ark.png
+├── static
+├── templates/index.html
+├── LICENSE
+├── Procfile
 ├── app.py
-├── index.html
 ├── README.md
-├── icon.png
-├── icon1.png
+├── requirements.txt
 ```
 
 ---
