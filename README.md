@@ -126,9 +126,12 @@ http://127.0.0.1:5000
 BSc Data Science Student
 
 ---
+<div align="center">
 
 ## ⭐ Support
 
 If you like this project, give it a ⭐ on GitHub!
 
 [![GitHub stars](https://img.shields.io/github/stars/vivekanandaasuru28-code/Urban-Infrastructure-Intelligence-Platform?style=social)](https://github.com/vivekanandaasuru28-code/Urban-Infrastructure-Intelligence-Platform)
+
+</div>
