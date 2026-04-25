@@ -13,6 +13,10 @@
 ![Plotly](https://img.shields.io/badge/charts-Plotly-3F4F75?style=flat-square&logo=plotly&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
 
+<br/>
+
+![App Preview](img/ark.png)
+
 </div>
 
 ---
