@@ -50,7 +50,7 @@ To build an AI-based urban intelligence platform that analyzes infrastructure, i
 1. Clone the repository
 
 ```
-git clone https://github.com/your-username/Urban-Infrastructure-Intelligence-Platform.git
+git clone https://github.com/vivekanandaasuru28-code/Urban-Infrastructure-Intelligence-Platform.git
 ```
 
 2. Install dependencies
