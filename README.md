@@ -1,7 +1,19 @@
+<div align="center">
 
 # 🌆 Urban Infrastructure Intelligence Platform
 
-An AI-powered web application that analyzes urban infrastructure using real-time geospatial data and visualizes insights through interactive maps and charts.
+**An AI-powered web application that analyzes urban infrastructure using real-time geospatial data and visualizes insights through interactive maps and charts.**
+
+<br/>
+
+![Status](https://img.shields.io/badge/status-active-success?style=flat-square)
+![Python](https://img.shields.io/badge/python-3.9+-blue?style=flat-square&logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/framework-flask-lightgrey?style=flat-square&logo=flask)
+![OpenStreetMap](https://img.shields.io/badge/data-OpenStreetMap-7EBC6F?style=flat-square&logo=openstreetmap&logoColor=white)
+![Plotly](https://img.shields.io/badge/charts-Plotly-3F4F75?style=flat-square&logo=plotly&logoColor=white)
+![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)
+
+</div>
 
 ---
 
@@ -48,25 +60,18 @@ To build an AI-based urban intelligence platform that analyzes infrastructure, i
 ## ⚙️ How to Run
 
 1. Clone the repository
-
 ```
 git clone https://github.com/vivekanandaasuru28-code/Urban-Infrastructure-Intelligence-Platform.git
 ```
-
 2. Install dependencies
-
 ```
 pip install flask pandas requests geopy plotly
 ```
-
 3. Run the app
-
 ```
 python app.py
 ```
-
 4. Open in browser
-
 ```
 http://127.0.0.1:5000
 ```
@@ -80,7 +85,6 @@ http://127.0.0.1:5000
 3. Fetches nearby data from OpenStreetMap
 4. Calculates distances and processes data
 5. Displays:
-
    * 📍 Map markers
    * 🔥 Heatmap
    * 📊 Charts
@@ -115,3 +119,5 @@ BSc Data Science Student
 ## ⭐ Support
 
 If you like this project, give it a ⭐ on GitHub!
+
+[![GitHub stars](https://img.shields.io/github/stars/vivekanandaasuru28-code/Urban-Infrastructure-Intelligence-Platform?style=social)](https://github.com/vivekanandaasuru28-code/Urban-Infrastructure-Intelligence-Platform)
