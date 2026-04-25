@@ -15,6 +15,10 @@
 
 <br/>
 
+   [![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-Visit%20App-blue?style=for-the-badge)](https://urban-infrastructure-intelligence.onrender.com/)
+   
+<br/>
+
 ![App Preview](img/ark.png)
 
 </div>
