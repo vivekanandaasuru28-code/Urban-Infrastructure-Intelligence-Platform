@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+     <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon1.png') }}">
+    <title>ARK of Renewal | Urban Analytics</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <link href="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/maplibre-gl@3.0.0/dist/maplibre-gl.js"></script>
+    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+    <style>
+      .logo-wrapper {
+    display: flex;
+    align-items: center; /* Aligns logo and text */
+    gap: 15px;
+}
+
+.styled-logo {
+    width: 40px;          /* Adjust size as needed */
+    height: 40px;
+    border-radius: 50%;   /* Makes the image circular */
+    border: 3px solid blue; /* Adds your blue border */
+    object-fit: cover;
+}
+                    
+         .title-icon {
+    width: 60px;           /* Increased size for better visibility */
+    height: 60px;
+    border-radius: 50%;    /* Makes the container a perfect circle */
+    border: 2px solid #ff8c00; /* Sets the orange border */
+    padding: 10px;         /* Creates space between icon and border */
+    background: rgba(255, 140, 0, 0.1); /* Optional: faint orange background glow */
+    box-shadow: 0 0 15px rgba(255, 140, 0, 0.4); /* Glowing outer effect */
+    object-fit: contain;
+}
+        :root { --bg-color: #0a0a0a; --card-bg: #161616; --accent: #ff8c00; --text-main: #e0e0e0; --text-dim: #a0a0a0; }
+        body { background: var(--bg-color); color: var(--text-main); font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; }
+        header { border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 30px; }
+        .search-box { background: var(--card-bg); padding: 25px; border-radius: 12px; display: flex; gap: 10px; border: 1px solid #333; }
+        input { flex: 1; background: #000; border: 1px solid #444; color: white; padding: 12px; border-radius: 6px; }
+        button { background: var(--accent); color: black; font-weight: bold; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        .section { margin-top: 40px; padding: 30px; background: var(--card-bg); border-radius: 16px; border: 1px solid #222; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .map, .map3d { height: 450px; border-radius: 12px; overflow: hidden; border: 1px solid #333; margin-top: 20px; position: relative; }
+        h2 { letter-spacing: -1px; color: #fff; margin: 0; }
+        .excel-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #ff8c00;
+    color: black;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.excel-modal {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    top: 0;
+    left: 0;
+}
+
+.excel-content {
+    background: #111;
+    margin: 5% auto;
+    padding: 20px;
+    width: 70%;
+}
+
+#excelSearch {
+    width: 100%;
+    padding: 10px;
+}
+
+#excelTable td {
+    border: 1px solid #333;
+    padding: 5px;
+}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+    <h2 class="app-title">
+        <div class="icon-container">
+            <img src="{{ url_for('static', filename='icons/icon.png') }}" class="title-icon" alt="ARK Icon">
+        </div>
+        ARK of Renewal
+    </h2>
+    <p style="color: var(--text-dim);">Urban Infrastructure Intelligence Platform</p>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</header>
+          
+
+        <form method="POST" class="search-box">
+            <input name="location" placeholder="Enter City or Neighborhood..." required>
+            <input name="infra" placeholder="e.g., amenity=hospital | tourism=viewpoint">
+            <button type="submit">GENERATE ANALYSIS</button>
+        </form>
+
+        {% if error %}<p style="color: #ff5555; margin-top: 20px;">{{ error }}</p>{% endif %}
+
+        {% if data_bundle %}
+            <div id="map" class="map"></div>
+            {% for item in data_bundle %}
+                <div class="section">
+                    <h3>Spatial Distribution: {{ item.type | title }}</h3>
+                    <div id="chart{{ loop.index }}" class="chart"></div>
+                    <div id="map3d{{ loop.index }}" class="map3d"></div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+            
+        {% if data_bundle %}
+            // Base Layers
+            const streetMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; OpenStreetMap' });
+            const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { attribution: 'Tiles &copy; Esri' });
+
+            const map = L.map('map', {
+                center: [{{ center_lat }}, {{ center_lon }}],
+                zoom: 13,
+                layers: [streetMap]
+            });
+
+            L.control.layers({"Symbolic": streetMap, "Satellite": satelliteMap}).addTo(map);
+
+            {% for item in data_bundle %}
+                const data{{ loop.index }} = {{ item.data | safe }};
+                data{{ loop.index }}.forEach(d => {
+                    L.marker([d.lat, d.lon]).addTo(map).bindPopup(`<b>${d.name}</b><br>${d.distance} km`);
+                });
+
+                Plotly.newPlot("chart{{ loop.index }}", {{ item.graph | safe }}.data, {{ item.graph | safe }}.layout, {responsive: true});
+
+                new deck.DeckGL({
+                    container: "map3d{{ loop.index }}",
+                    map: maplibregl,
+                    mapStyle: "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+                    initialViewState: { longitude: {{ center_lon }}, latitude: {{ center_lat }}, zoom: 14, pitch: 45, bearing: 0 },
+                    controller: true,
+                    getTooltip: ({object}) => object && {
+                        html: `<div style="padding: 10px; background: rgba(0,0,0,0.9); border: 1px solid #ff8c00; border-radius: 5px; color: white;">
+                               <strong style="color: #ff8c00;">${object.name}</strong><br/>Distance: ${object.distance} km</div>`
+                    },
+                    layers: [
+                        new deck.ColumnLayer({
+                            data: data{{ loop.index }},
+                            getPosition: d => [d.lon, d.lat],
+                            getElevation: d => d.distance * 200,
+                            radius: 50,
+                            getFillColor: [255, 140, 0, 200],
+                            pickable: true
+                        })
+                    ]
+                });
+            {% endfor %}
+        {% endif %}
+     let excelData = [];
+
+function openExcelPopup(){
+    document.getElementById("excelPopup").style.display="block";
+    loadExcelData();
+}
+
+function closeExcelPopup(){
+    document.getElementById("excelPopup").style.display="none";
+}
+
+function loadExcelData(){
+    fetch("{{ url_for('static', filename='data.xlsx') }}")
+    .then(res=>res.arrayBuffer())
+    .then(data=>{
+        let wb=XLSX.read(data,{type:"array"});
+        let ws=wb.Sheets[wb.SheetNames[0]];
+        let json=XLSX.utils.sheet_to_json(ws,{header:1, defval:""});
+        excelData=json;
+        displayExcel(json);
+    });
+}
+
+function displayExcel(data){
+    let table=document.getElementById("excelTable");
+    table.innerHTML="";
+
+    if(data.length===0){
+        table.innerHTML="<tr><td>No Data</td></tr>";
+        return;
+    }
+
+    data.forEach(row=>{
+        let tr=document.createElement("tr");
+        row.forEach(cell=>{
+            if(cell!==""){
+                let td=document.createElement("td");
+                td.innerText=cell;
+                tr.appendChild(td);
+            }
+        });
+        table.appendChild(tr);
+    });
+}
+
+function filterExcel(){
+    let s=document.getElementById("excelSearch").value.toLowerCase();
+    let f=excelData.filter(r=>r.join(" ").toLowerCase().includes(s));
+    displayExcel(f);
+}
+    </script>
+<button class="excel-btn" onclick="openExcelPopup()">Tags</button>
+
+<div id="excelPopup" class="excel-modal">
+    <div class="excel-content">
+        <button onclick="closeExcelPopup()">Close</button>
+        <input id="excelSearch" onkeyup="filterExcel()" placeholder="Search...">
+        <table id="excelTable"></table>
+    </div>
+</div>
+</body>
+</html>
