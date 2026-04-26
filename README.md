@@ -3,7 +3,7 @@
 # 🌆 Urban Infrastructure Intelligence Platform
 
 **An AI-powered web application that analyzes urban infrastructure using real-time geospatial data and visualizes insights through interactive maps and charts.**
-
+Author- Asuru Vivekananda 
 <br/>
 
 ![Status](https://img.shields.io/badge/status-active-success?style=flat-square)
